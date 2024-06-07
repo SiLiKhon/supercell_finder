@@ -135,6 +135,7 @@ def find_optimal_supercell(
     lattice: np.ndarray,
     d_inner: float,
     depth: int = 1,
+    minimal_volume_increase: int = 1,
     max_candidates: int = 1000,
     rng_seed: int = 42,
     verbose: bool = False,
@@ -167,6 +168,7 @@ def find_optimal_supercell(
     """
     assert lattice.shape == (3, 3)
     assert d_inner > 0
+    assert isinstance(minimal_volume_increase, int) and minimal_volume_increase >= 1
     # The smallest possible cell fitting the sphere is a cube with side = d_inner.
     # Hence, this is the minimal volume change we need.
     det_lower_bound = np.ceil(
@@ -178,6 +180,12 @@ def find_optimal_supercell(
     hh = calculate_interplanar_distances(lattice)
     diagonal_scalings = np.ceil(d_inner / hh).astype(int)
     det_upper_bound = diagonal_scalings.prod()
+
+    # Apply additional constraints due to minimal increase requirement:
+    det_lower_bound = max(det_lower_bound, minimal_volume_increase)
+    while minimal_volume_increase > det_upper_bound:
+        diagonal_scalings += 1
+        det_upper_bound = diagonal_scalings.prod()
 
     best = np.diag(diagonal_scalings)
     if det_lower_bound != det_upper_bound:  # if so, there may be a better solution than diagonal
