@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import numpy as np
-print("I'M PATCHED!")
 
 
 EPSILON = 1e-10
