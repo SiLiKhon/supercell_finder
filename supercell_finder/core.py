@@ -3,9 +3,6 @@ from typing import Tuple
 import numpy as np
 
 
-EPSILON = 1e-10
-MAX_OPT_ITERATIONS = 1000
-
 def det_i(x: np.ndarray):
     assert x.dtype in ["int32", "int64"]
     return np.round(np.linalg.det(x)).astype(int)
